@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -12,10 +12,13 @@ let package = Package(
             targets: ["SimpleToast"]),
     ],
     dependencies: [],
-    targets: [        
+    targets: [
         .target(
             name: "SimpleToast",
-            dependencies: []),
+            dependencies: [],
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]),
         .testTarget(
             name: "SimpleToastTests",
             dependencies: ["SimpleToast"]),

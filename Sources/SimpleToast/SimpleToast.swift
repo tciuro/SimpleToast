@@ -9,6 +9,7 @@
 import SwiftUI
 import Combine
 
+@MainActor
 struct SimpleToast<SimpleToastContent: View>: ViewModifier {
     @Binding var showToast: Bool
 
@@ -174,9 +175,11 @@ struct SimpleToast<SimpleToastContent: View>: ViewModifier {
     /// Dismiss the sheet after the timeout specified in the options
     private func dismissAfterTimeout() {
         if let timeout = options.hideAfter, showToast, options.hideAfter != nil {
-            DispatchQueue.main.async { [self] in
-                timer?.invalidate()
-                timer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false, block: { _ in dismiss() })
+            self.timer?.invalidate()
+            self.timer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false) { _ in
+                Task { @MainActor in
+                    self.dismiss()
+                }
             }
         }
     }
@@ -212,6 +215,7 @@ public extension View {
     ///   - onDismiss: Closure called when the toast is dismissed
     ///   - content: Inner content for the toast
     /// - Returns: The toast view
+    @MainActor
     func simpleToast<SimpleToastContent: View>(
         isPresented: Binding<Bool>, options: SimpleToastOptions,
         onDismiss: (() -> Void)? = nil,
@@ -231,6 +235,7 @@ public extension View {
     ///   - onDismiss: Closure called when the toast is dismissed
     ///   - content: Inner content for the toast
     /// - Returns: The toast view
+    @MainActor
     func simpleToast<SimpleToastContent: View, Item: Identifiable>(
         item: Binding<Item?>?, options: SimpleToastOptions,
         onDismiss: (() -> Void)? = nil,
@@ -263,6 +268,7 @@ public extension View {
     ///   - content: Inner content for the toast
     /// - Returns: The toast view
     @available(*, deprecated, renamed: "simpleToast(isPresented:options:onDismiss:content:)")
+    @MainActor
     func simpleToast<SimpleToastContent: View>(
         isShowing: Binding<Bool>, options: SimpleToastOptions,
         onDismiss: (() -> Void)? = nil,
