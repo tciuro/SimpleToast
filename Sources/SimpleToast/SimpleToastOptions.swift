@@ -9,7 +9,7 @@
 import SwiftUI
 
 /// Object for customizing the SimpleToast toast message
-public struct SimpleToastOptions {
+public struct SimpleToastOptions: Sendable {
     /// Alignment of the toast (e.g. .top)
     public var alignment: Alignment
 
@@ -37,7 +37,7 @@ public struct SimpleToastOptions {
     public var dismissOnTap: Bool? = false
 
     /// All available modifier types
-    public enum ModifierType {
+    public enum ModifierType: Sendable {
         case fade, slide, scale, skew
     }
 
